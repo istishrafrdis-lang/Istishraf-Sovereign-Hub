@@ -1,23 +1,16 @@
-# 🛡️ إمبراطورية استشراف السيادية | Istishraf Sovereign Hub
+🛡️ Istishraf Sovereign Hub | إمبراطورية استشراف السيادية
+The Neural Center for Research, Development & Investment Services.
+المركز العصبي للبحث والتطوير والخدمات الاستثمارية.
 
-## 🏛️ الهيكل التنظيمي للمستودع (Sovereign Repository Structure)
+📜 Mission | المهمة
+To build a digital sovereign ecosystem that integrates cultural heritage, smart investment, and data-driven decision making via the TIT Stablecoin and AI-00 Intelligence.
+بناء نظام سيادي رقمي يدمج التراث الثقافي، الاستثمار الذكي، واتخاذ القرار المبني على البيانات عبر عملة TIT وذكاء AI-00.
 
-| الرمز | المجلد | الوظيفة الاستراتيجية |
-| :--- | :--- | :--- |
-| 🧠 | **00-AI-CEO-Intelligence** | محرك الذكاء الاصطناعي لإدارة المنظومة وتوليد المحتوى (80%). |
-| 🔑 | **01-Core-Identity-SSO** | نظام الهوية الموحد (LinkedIn + X + الرقم الوطني). |
-| 🛡️ | **02-Sovereign-Vault-DB** | خزنة البيانات المعزولة لقواعد البيانات المشفرة والسيادية. |
-| 💳 | **03-Global-Wallet-System** | بوابة الدفع المركزية (إمزتت، USDT، سداد، لي باي). |
-| 📢 | **04-Media-Content-Hub** | المركز الإعلامي، المدونة، ونظام النشر المتزامن. |
-| ⚖️ | **05-Legal-IP-Registry** | سجل الملكية الفكرية، العلامات التجارية، وتوثيق الأصول. |
-| 🛰️ | **06-Security-Logs** | أنظمة الحماية، الجدران النارية، وسجلات تتبع الاختراق. |
+🏗️ Structure | الهيكل
+Main Hub: Istishraf (Investment & R&D)
 
----
+Sub-Domains: Emzatit (Polls), Andalusia (Culture), Dwaya (Heritage).
 
-## 📜 ميثاق العمل (The Golden Rules)
-1. **السيادة:** كافة البيانات تخضع لقوانين الأمن القومي المعلوماتي الليبي.
-2. **النسبة الذهبية:** 80% أتمتة وذكاء اصطناعي، 20% رقابة بشرية نخبوية.
-3. **التكامل:** النطاقات الفرعية (إمزتت، سوق المشير، ضواية) تسحب قوتها من هذه النواة.
+Fuel: $TIT Currency.
 
----
-**© 2026 Istishraf for Research & Development | Integrity, Transparency, Sovereignty**
+Property of Istishraf For Research, Development & Investment Services. All Rights Reserved.
