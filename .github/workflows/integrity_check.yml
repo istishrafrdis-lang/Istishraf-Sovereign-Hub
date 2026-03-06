@@ -1,0 +1,27 @@
+name: Istishraf OS v1.1 Integrity Check
+
+# يعمل الفحص عند كل عملية رفع (Push) أو طلب سحب (Pull Request)
+on: [push, pull_request]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout Code
+      uses: actions/checkout@v3
+
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.9'
+
+    - name: Run Sovereignty Integrity Test
+      run: |
+        # التأكد من وجود ملف الاختبار وتشغيله
+        if [ -f test_integrity.py ]; then
+          python test_integrity.py
+        else
+          echo "⚠️ ملف الاختبار test_integrity.py غير موجود في المسار الرئيسي!"
+          exit 1
+        fi
