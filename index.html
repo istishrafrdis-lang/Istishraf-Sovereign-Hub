@@ -1,0 +1,193 @@
+<!-- إضافة قسم أكواد التفعيل المدنية في الفوتر -->
+<div class="activation-codes-section">
+    <div class="container">
+        <h3 style="color: var(--gold); text-align: center; margin-bottom: 30px;">
+            <i class="fas fa-key"></i> أكواد التفعيل المدنية
+        </h3>
+        <div class="codes-grid">
+            <div class="code-card">
+                <div class="code-icon">👑</div>
+                <div class="code-name">Architect_2026</div>
+                <div class="code-desc">للمستثمرين والمؤسسين</div>
+                <div class="code-badge">يفتح بوابة الاستثمار في الحصص السيادية</div>
+                <button class="copy-code" onclick="copyCode('Architect_2026')">
+                    <i class="fas fa-copy"></i> نسخ
+                </button>
+            </div>
+            
+            <div class="code-card">
+                <div class="code-icon">🗳️</div>
+                <div class="code-name">Civic_Pulse</div>
+                <div class="code-desc">للموظفين والمواطنين</div>
+                <div class="code-badge">يفعل محفظة السنابل ويبدأ احتساب العوائد</div>
+                <button class="copy-code" onclick="copyCode('Civic_Pulse')">
+                    <i class="fas fa-copy"></i> نسخ
+                </button>
+            </div>
+            
+            <div class="code-card">
+                <div class="code-icon">💡</div>
+                <div class="code-name">Young_Innovator</div>
+                <div class="code-desc">للشباب والمبتكرين</div>
+                <div class="code-badge">يفتح بنك الأفكار وبوابة التمويل الصغير</div>
+                <button class="copy-code" onclick="copyCode('Young_Innovator')">
+                    <i class="fas fa-copy"></i> نسخ
+                </button>
+            </div>
+            
+            <div class="code-card">
+                <div class="code-icon">🌟</div>
+                <div class="code-name">Foresight_Ambassador</div>
+                <div class="code-desc">للقادة الشباب</div>
+                <div class="code-badge">تقديم طلب الانضمام لبرنامج السفراء</div>
+                <button class="copy-code" onclick="copyCode('Foresight_Ambassador')">
+                    <i class="fas fa-copy"></i> نسخ
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- إضافة صندوق الرسائل الديناميكي -->
+<div class="golden-ticker enhanced">
+    <div class="ticker-content">
+        <span class="ticker-item">
+            📘 جديد: كتاب "الثروة المستقلة" - احجز نسختك الآن ← 
+            <a href="#" style="color: black; text-decoration: underline;">احجز</a>
+        </span>
+        <span class="ticker-item">
+            🎙️ قريباً: ندوة "المواطن الرقمي" مع مجلس الحكماء - 15 مارس
+        </span>
+        <span class="ticker-item">
+            💰 تم تمويل 5 مشاريع مبتكرة في سبها بقيمة 15,000 $TIT
+        </span>
+        <span class="ticker-item">
+            🏛️ افتتاح "ضواية 3D" - جولة افتراضية في لبدة الكبرى
+        </span>
+        <span class="ticker-item">
+            🔑 استخدم كود "Civic_Pulse" لتفعيل محفظة السنابل
+        </span>
+    </div>
+</div>
+
+<style>
+/* أكواد التفعيل */
+.activation-codes-section {
+    padding: 60px 10%;
+    background: linear-gradient(180deg, transparent, rgba(212, 175, 55, 0.05));
+    border-top: 1px solid var(--gold-light);
+}
+
+.codes-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 25px;
+    margin-top: 20px;
+}
+
+.code-card {
+    background: var(--glass);
+    backdrop-filter: blur(10px);
+    border: 1px solid var(--gold-light);
+    border-radius: 15px;
+    padding: 25px;
+    text-align: center;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.code-card::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: radial-gradient(circle, rgba(212, 175, 55, 0.1), transparent);
+    opacity: 0;
+    transition: opacity 0.3s;
+}
+
+.code-card:hover {
+    transform: translateY(-5px);
+    border-color: var(--gold);
+    box-shadow: 0 10px 30px rgba(212, 175, 55, 0.2);
+}
+
+.code-card:hover::before {
+    opacity: 1;
+}
+
+.code-icon {
+    font-size: 3rem;
+    margin-bottom: 15px;
+}
+
+.code-name {
+    color: var(--gold);
+    font-family: monospace;
+    font-size: 1.2rem;
+    font-weight: bold;
+    margin-bottom: 10px;
+}
+
+.code-desc {
+    color: white;
+    font-size: 1rem;
+    margin-bottom: 10px;
+}
+
+.code-badge {
+    background: rgba(212, 175, 55, 0.1);
+    color: #ccc;
+    font-size: 0.85rem;
+    padding: 8px;
+    border-radius: 5px;
+    margin: 15px 0;
+}
+
+.copy-code {
+    background: transparent;
+    border: 1px solid var(--gold);
+    color: var(--gold);
+    padding: 8px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: all 0.3s;
+    font-size: 0.9rem;
+}
+
+.copy-code:hover {
+    background: var(--gold);
+    color: black;
+}
+
+/* تحسين شريط الرسائل */
+.golden-ticker.enhanced {
+    background: linear-gradient(90deg, #000, var(--gold), #000);
+    padding: 12px 0;
+    font-size: 1rem;
+    border-bottom: 2px solid var(--gold);
+}
+
+.ticker-item a {
+    color: black;
+    font-weight: bold;
+    text-decoration: underline;
+    transition: color 0.3s;
+}
+
+.ticker-item a:hover {
+    color: #000;
+    text-decoration: none;
+}
+</style>
+
+<script>
+function copyCode(code) {
+    navigator.clipboard.writeText(code).then(() => {
+        alert(`✅ تم نسخ الكود: ${code}\nاستخدمه في منصة إمزتت لتفعيل خدماتك`);
+    });
+}
+</script>
