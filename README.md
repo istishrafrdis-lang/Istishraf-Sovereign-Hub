@@ -1,16 +1,12 @@
-🛡️ Istishraf Sovereign Hub | إمبراطورية استشراف السيادية
-The Neural Center for Research, Development & Investment Services.
-المركز العصبي للبحث والتطوير والخدمات الاستثمارية.
+# 🛡️ استشراف OS - الإصدار 1.1 (إصدار الثروة المستقلة)
 
-📜 Mission | المهمة
-To build a digital sovereign ecosystem that integrates cultural heritage, smart investment, and data-driven decision making via the TIT Stablecoin and AI-00 Intelligence.
-بناء نظام سيادي رقمي يدمج التراث الثقافي، الاستثمار الذكي، واتخاذ القرار المبني على البيانات عبر عملة TIT وذكاء AI-00.
+تحديث سيادي يربط محتوى الكتاب بالبنية التحتية الرقمية.
 
-🏗️ Structure | الهيكل
-Main Hub: Istishraf (Investment & R&D)
+## 🚀 المكونات الجديدة:
+- **نظام NFT للبحوث:** تحويل الأفكار إلى أصول رقمية.
+- **Proof of Truth:** بروتوكول المصداقية المعلوماتية.
+- **صندوق المبتكرين:** الأتمتة المالية للمبدعين.
 
-Sub-Domains: Emzatit (Polls), Andalusia (Culture), Dwaya (Heritage).
-
-Fuel: $TIT Currency.
-
-Property of Istishraf For Research, Development & Investment Services. All Rights Reserved.
+## 🔑 أكواد التفعيل المدعومة:
+- `Architect_2026` (للنخبة)
+- `Civic_Pulse` (للمواطنين)
