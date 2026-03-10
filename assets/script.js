@@ -1,22 +1,146 @@
 /* ============================================================================
-   استشراف | الوظائف التفاعلية - الإصدار 1.2
+   استشراف | الوظائف التفاعلية - الإصدار 1.4 (الفيروزي السيادي)
    ============================================================================
    البصمة الجينية: 🧬 AI-00 | φ = 1.618 | UUID: IST-2026-SOV-001
    ============================================================================ */
 
 // ============================================================================
-// تهيئة المتغيرات العامة
+// التكوين العام (CONFIG) - سهل التحديث مستقبلاً
 // ============================================================================
 const CONFIG = {
-    TIT_PRICE: 1.00,           // ثابت حالياً
-    BASE_CITIZENS: 10342,       // العدد الأساسي للمواطنين
-    BASE_HERITAGE: 47,          // العدد الأساسي للأصول التراثية
-    UPDATE_INTERVAL: 5000,       // تحديث كل 5 ثواني
-    VALID_CODES: ['Architect_2026', 'Civic_Pulse', 'Young_Innovator', 'Foresight_Ambassador']
+    // مؤشرات السيادة
+    TIT_PRICE: 1.00,
+    BASE_CITIZENS: 10342,
+    BASE_HERITAGE: 47,
+    UPDATE_INTERVAL: 5000,
+    
+    // أكواد التفعيل وربطها بالأقسام
+    CODES: {
+        'Architect_2026': {
+            section: 'andalusia-club',    // يفتح نادي أندلسية
+            message: 'مرحباً بك أيها المؤسس',
+            unlocks: ['andalusia-club', 'dwaya-engine']
+        },
+        'Civic_Pulse': {
+            section: 'book-section',       // يفتح قسم الكتاب
+            message: 'تم تفعيل محفظة السنابل',
+            unlocks: ['book-section']
+        },
+        'Young_Innovator': {
+            section: 'blog-section',       // يفتح المدونة
+            message: 'مرحباً أيها المبتكر',
+            unlocks: ['blog-section']
+        },
+        'Foresight_Ambassador': {
+            section: 'all',                 // يفتح كل شيء
+            message: 'مرحباً أيها السفير',
+            unlocks: ['andalusia-club', 'dwaya-engine', 'book-section', 'blog-section']
+        }
+    },
+    
+    // عناوين الأقسام للمفاتيح
+    SECTION_IDS: {
+        'andalusia-club': 'andalusia-club',
+        'dwaya-engine': 'dwaya-engine',
+        'book-section': 'book-section',
+        'blog-section': 'blog-section'
+    }
 };
 
 // ============================================================================
-// البصمة الجينية - إضافة تلقائية
+// نظام الحالة (State Management) مع localStorage
+// ============================================================================
+const SovereignState = {
+    // الحالة الحالية
+    state: {
+        unlockedSections: [],
+        enteredCodes: [],
+        citizenCount: CONFIG.BASE_CITIZENS,
+        heritageCount: CONFIG.BASE_HERITAGE
+    },
+    
+    // تهيئة الحالة من localStorage
+    init: function() {
+        const saved = localStorage.getItem('istishraf_state');
+        if (saved) {
+            try {
+                const parsed = JSON.parse(saved);
+                this.state = { ...this.state, ...parsed };
+                console.log('✅ State loaded from localStorage', this.state);
+            } catch (e) {
+                console.error('❌ Error loading state', e);
+            }
+        }
+        
+        // تطبيق الحالة على الواجهة
+        this.applyState();
+    },
+    
+    // حفظ الحالة في localStorage
+    save: function() {
+        localStorage.setItem('istishraf_state', JSON.stringify(this.state));
+        console.log('💾 State saved to localStorage');
+    },
+    
+    // فتح قسم
+    unlockSection: function(sectionId) {
+        if (!this.state.unlockedSections.includes(sectionId)) {
+            this.state.unlockedSections.push(sectionId);
+            this.applyState();
+            this.save();
+        }
+    },
+    
+    // فتح عدة أقسام
+    unlockSections: function(sectionIds) {
+        sectionIds.forEach(id => {
+            if (!this.state.unlockedSections.includes(id)) {
+                this.state.unlockedSections.push(id);
+            }
+        });
+        this.applyState();
+        this.save();
+    },
+    
+    // تطبيق الحالة على DOM
+    applyState: function() {
+        // كل الأقسام التي يمكن قفلها
+        const sections = document.querySelectorAll('[data-section]');
+        
+        sections.forEach(section => {
+            const sectionId = section.dataset.section;
+            
+            if (this.state.unlockedSections.includes(sectionId)) {
+                section.classList.remove('locked');
+                section.classList.add('unlocked');
+            } else {
+                section.classList.add('locked');
+                section.classList.remove('unlocked');
+            }
+        });
+    },
+    
+    // التحقق من كود
+    validateCode: function(code) {
+        return CONFIG.CODES[code] || null;
+    },
+    
+    // مسح الحالة (للتجربة)
+    reset: function() {
+        this.state = {
+            unlockedSections: [],
+            enteredCodes: [],
+            citizenCount: CONFIG.BASE_CITIZENS,
+            heritageCount: CONFIG.BASE_HERITAGE
+        };
+        localStorage.removeItem('istishraf_state');
+        this.applyState();
+        console.log('🔄 State reset');
+    }
+};
+
+// ============================================================================
+// البصمة الجينية
 // ============================================================================
 function addGeneticFingerprint() {
     const fingerprintHTML = `
@@ -26,21 +150,127 @@ function addGeneticFingerprint() {
             <i class="fas fa-shield-alt"></i>
         </div>
     `;
-    
-    // إضافة في بداية الـ body
     document.body.insertAdjacentHTML('afterbegin', fingerprintHTML);
 }
 
 // ============================================================================
-// مؤشرات السيادة الحية
+// شريط التيكر - يقرأ من CONFIG
+// ============================================================================
+function addSovereignTicker() {
+    const tickerHTML = `
+        <div class="sovereign-ticker">
+            <div class="ticker-content">
+                <div class="ticker-item">
+                    <i class="fas fa-coins"></i>
+                    <span>$TIT: <strong data-index="tit">${CONFIG.TIT_PRICE.toFixed(2)}</strong> USD</span>
+                </div>
+                <div class="ticker-item">
+                    <i class="fas fa-users"></i>
+                    <span>المواطنون: <strong data-index="citizens">${CONFIG.BASE_CITIZENS.toLocaleString()}</strong></span>
+                </div>
+                <div class="ticker-item">
+                    <i class="fas fa-landmark"></i>
+                    <span>الأصول التراثية: <strong data-index="heritage">${CONFIG.BASE_HERITAGE}</strong></span>
+                </div>
+                <div class="ticker-item">
+                    <i class="fas fa-chart-line"></i>
+                    <span>مؤشر السيادة: <strong data-index="score">618</strong></span>
+                </div>
+                <div class="ticker-item">
+                    <i class="fas fa-crown"></i>
+                    <span>φ = 1.618</span>
+                </div>
+            </div>
+        </div>
+    `;
+    document.body.insertAdjacentHTML('afterbegin', tickerHTML);
+}
+
+// ============================================================================
+// مؤشرات السيادة
+// ============================================================================
+function addSovereignIndexCards() {
+    const indexHTML = `
+        <div class="sovereign-index">
+            <div class="index-card">
+                <div class="index-value" data-index="tit">${CONFIG.TIT_PRICE.toFixed(2)}</div>
+                <div class="index-label">$TIT / USD</div>
+            </div>
+            <div class="index-card">
+                <div class="index-value" data-index="citizens">${CONFIG.BASE_CITIZENS.toLocaleString()}</div>
+                <div class="index-label">مواطن رقمي</div>
+            </div>
+            <div class="index-card">
+                <div class="index-value" data-index="heritage">${CONFIG.BASE_HERITAGE}</div>
+                <div class="index-label">أصل تراثي</div>
+            </div>
+            <div class="index-card">
+                <div class="index-value" data-index="score">618</div>
+                <div class="index-label">مؤشر السيادة</div>
+            </div>
+        </div>
+    `;
+    document.body.insertAdjacentHTML('beforeend', indexHTML);
+}
+
+// ============================================================================
+// أكواد التفعيل
+// ============================================================================
+function addActivationCodes() {
+    const codesHTML = `
+        <div class="codes-grid">
+            <div class="code-chip" onclick="handleCodeClick('Architect_2026', this)">
+                <i class="fas fa-crown"></i> Architect_2026
+            </div>
+            <div class="code-chip" onclick="handleCodeClick('Civic_Pulse', this)">
+                <i class="fas fa-vote-yea"></i> Civic_Pulse
+            </div>
+            <div class="code-chip" onclick="handleCodeClick('Young_Innovator', this)">
+                <i class="fas fa-lightbulb"></i> Young_Innovator
+            </div>
+            <div class="code-chip" onclick="handleCodeClick('Foresight_Ambassador', this)">
+                <i class="fas fa-star"></i> Foresight_Ambassador
+            </div>
+        </div>
+    `;
+    document.body.insertAdjacentHTML('beforeend', codesHTML);
+}
+
+// ============================================================================
+// معالجة النقر على كود
+// ============================================================================
+function handleCodeClick(code, element) {
+    const codeInfo = CONFIG.CODES[code];
+    
+    if (codeInfo) {
+        // فتح الأقسام المرتبطة
+        if (codeInfo.unlocks) {
+            SovereignState.unlockSections(codeInfo.unlocks);
+        }
+        
+        // إضافة تأثير بصري
+        element.classList.add('copied');
+        setTimeout(() => element.classList.remove('copied'), 2000);
+        
+        // إظهار رسالة نجاح
+        showToast(`✅ ${codeInfo.message}`, 'success');
+        
+        // تسجيل الكود
+        SovereignState.state.enteredCodes.push(code);
+        SovereignState.save();
+    }
+}
+
+// ============================================================================
+// تحديث مؤشرات السيادة
 // ============================================================================
 function updateSovereignIndices() {
-    // محاكاة نمو طفيف في الأرقام
+    // محاكاة نمو طفيف
     const citizens = CONFIG.BASE_CITIZENS + Math.floor(Math.random() * 100);
-    const heritage = CONFIG.BASE_HERITAGE + Math.floor(Math.random() * 5);
+    const heritage = CONFIG.BASE_HERITAGE + Math.floor(Math.random() * 3);
     const score = Math.floor(600 + Math.random() * 50);
     
-    // تحديث القيم في شريط التيكر
+    // تحديث القيم في DOM
     document.querySelectorAll('[data-index="tit"]').forEach(el => {
         el.textContent = CONFIG.TIT_PRICE.toFixed(2);
     });
@@ -57,12 +287,38 @@ function updateSovereignIndices() {
         el.textContent = score;
     });
     
-    // تحديث مؤشرات النمو
-    document.querySelectorAll('.index-trend').forEach(el => {
-        const trend = (Math.random() * 3 - 1).toFixed(1);
-        el.innerHTML = `<i class="fas fa-arrow-${trend > 0 ? 'up' : 'down'}"></i> ${trend > 0 ? '+' : ''}${trend}%`;
-        el.style.color = trend > 0 ? '#2ecc71' : '#ff6b6b';
-    });
+    // تحديث الحالة
+    SovereignState.state.citizenCount = citizens;
+    SovereignState.state.heritageCount = heritage;
+}
+
+// ============================================================================
+// Toast Notifications
+// ============================================================================
+function showToast(message, type = 'success') {
+    const toast = document.createElement('div');
+    toast.style.cssText = `
+        position: fixed;
+        bottom: 20px;
+        left: 50%;
+        transform: translateX(-50%);
+        background: ${type === 'success' ? 'var(--teal-dark)' : '#ff6b6b'};
+        color: black;
+        padding: 12px 25px;
+        border-radius: 50px;
+        font-weight: bold;
+        z-index: 3000;
+        animation: slideUp 0.3s ease;
+        box-shadow: 0 5px 20px rgba(0,206,209,0.3);
+        direction: rtl;
+    `;
+    toast.textContent = message;
+    document.body.appendChild(toast);
+    
+    setTimeout(() => {
+        toast.style.animation = 'slideDown 0.3s ease';
+        setTimeout(() => toast.remove(), 300);
+    }, 3000);
 }
 
 // ============================================================================
@@ -71,7 +327,6 @@ function updateSovereignIndices() {
 let currentModal = null;
 
 function openModal(type) {
-    // إنشاء عنصر المودال
     const modal = document.createElement('div');
     modal.className = 'modal active';
     modal.id = 'auth-modal';
@@ -82,24 +337,22 @@ function openModal(type) {
     
     modal.innerHTML = `
         <div class="modal-content">
-            <button class="modal-close" onclick="closeModal()">
+            <button class="modal-close" onclick="closeModal()" style="position: absolute; top: 15px; left: 15px; background: none; border: none; color: var(--teal-light); font-size: 1.5rem; cursor: pointer;">
                 <i class="fas fa-times"></i>
             </button>
-            <h3>${title}</h3>
-            <i class="fas fa-crown" style="color: var(--gold); font-size: 3rem; display: block; text-align: center; margin-bottom: 20px;"></i>
+            <h3 style="color: var(--teal-light); text-align: center;">${title}</h3>
+            <i class="fas fa-crown" style="color: var(--teal-light); font-size: 3rem; display: block; text-align: center; margin-bottom: 20px;"></i>
             <input type="text" class="modal-input" id="modal-input" placeholder="${placeholder}">
-            <button class="btn-gold" style="width: 100%;" onclick="handleAuth('${type}')">
+            <button class="btn-teal" style="width: 100%;" onclick="handleAuth('${type}')">
                 <i class="fas fa-${type === 'login' ? 'sign-in-alt' : 'user-plus'}"></i>
                 ${buttonText}
             </button>
-            <div class="message" id="auth-message"></div>
+            <div class="message" id="auth-message" style="margin-top: 15px; display: none;"></div>
         </div>
     `;
     
     document.body.appendChild(modal);
     currentModal = modal;
-    
-    // تركيز تلقائي على حقل الإدخال
     setTimeout(() => document.getElementById('modal-input')?.focus(), 100);
 }
 
@@ -112,250 +365,34 @@ function closeModal() {
 
 function handleAuth(type) {
     const input = document.getElementById('modal-input');
-    const messageDiv = document.getElementById('auth-message');
     
     if (!input.value.trim()) {
-        showMessage(messageDiv, 'الرجاء إدخال البيانات المطلوبة', 'error');
+        showToast('الرجاء إدخال البيانات', 'error');
         return;
     }
     
     if (type === 'login') {
-        // التحقق من كود السيادة
-        if (CONFIG.VALID_CODES.includes(input.value.trim())) {
-            showMessage(messageDiv, '✅ مرحباً بك في الإمبراطورية السيادية', 'success');
-            setTimeout(() => {
-                closeModal();
-                // تحديث واجهة المستخدم بعد الدخول
-                document.body.classList.add('authenticated');
-            }, 1500);
+        const codeInfo = CONFIG.CODES[input.value.trim()];
+        if (codeInfo) {
+            showToast(`✅ ${codeInfo.message}`, 'success');
+            
+            // فتح الأقسام المرتبطة
+            if (codeInfo.unlocks) {
+                SovereignState.unlockSections(codeInfo.unlocks);
+            }
+            
+            setTimeout(closeModal, 1000);
         } else {
-            showMessage(messageDiv, '❌ كود السيادة غير صحيح', 'error');
+            showToast('❌ كود غير صحيح', 'error');
         }
     } else {
-        // تسجيل مواطن جديد (محاكاة)
-        showMessage(messageDiv, '✅ تم إرسال طلب التسجيل. سيتم تفعيل الحساب خلال 24 ساعة', 'success');
-        setTimeout(closeModal, 2000);
-    }
-}
-
-function showMessage(element, text, type) {
-    element.className = `message ${type}`;
-    element.style.display = 'block';
-    element.innerHTML = text;
-}
-
-// ============================================================================
-// نسخ أكواد التفعيل
-// ============================================================================
-async function copyCode(code, element) {
-    try {
-        await navigator.clipboard.writeText(code);
-        
-        // تغيير مظهر العنصر مؤقتاً
-        const originalText = element.innerHTML;
-        element.innerHTML = '<i class="fas fa-check"></i> تم النسخ!';
-        element.classList.add('copied');
-        
-        setTimeout(() => {
-            element.innerHTML = originalText;
-            element.classList.remove('copied');
-        }, 2000);
-        
-        // إظهار رسالة نجاح
-        showToast(`✅ تم نسخ الكود: ${code}`);
-        
-    } catch (err) {
-        showToast('❌ فشل النسخ. حاول مرة أخرى', 'error');
-    }
-}
-
-function showToast(message, type = 'success') {
-    // إنشاء عنصر توست بسيط
-    const toast = document.createElement('div');
-    toast.style.cssText = `
-        position: fixed;
-        bottom: 20px;
-        right: 20px;
-        background: ${type === 'success' ? '#2ecc71' : '#ff6b6b'};
-        color: black;
-        padding: 12px 25px;
-        border-radius: 50px;
-        font-weight: bold;
-        z-index: 3000;
-        animation: slideIn 0.3s ease;
-        box-shadow: 0 5px 20px rgba(0,0,0,0.3);
-    `;
-    toast.textContent = message;
-    
-    document.body.appendChild(toast);
-    
-    setTimeout(() => {
-        toast.style.animation = 'slideOut 0.3s ease';
-        setTimeout(() => toast.remove(), 300);
-    }, 3000);
-}
-
-// ============================================================================
-// وظائف الدفع
-// ============================================================================
-function payWithTIT() {
-    showMessage(
-        document.getElementById('payment-message'),
-        'جاري ربط محفظة Imzatit والعقد الذكي TIT...',
-        'info'
-    );
-}
-
-function payWithBinance() {
-    showMessage(
-        document.getElementById('payment-message'),
-        'جاري التوجيه إلى بوابة Binance Pay الآمنة...',
-        'info'
-    );
-}
-
-function payWithBank() {
-    showMessage(
-        document.getElementById('payment-message'),
-        'جاري إنشاء طلب تحويل مصرفي... يرجى الانتظار',
-        'info'
-    );
-}
-
-// ============================================================================
-// دخول نادي أندلسية
-// ============================================================================
-function enterClub() {
-    const memberId = document.getElementById('memberID').value.trim();
-    const messageDiv = document.getElementById('club-message');
-    
-    if (!memberId) {
-        showMessage(messageDiv, '❌ الرجاء إدخال رقم العضوية', 'error');
-        return;
-    }
-    
-    if (CONFIG.VALID_CODES.includes(memberId)) {
-        showMessage(messageDiv, '✅ مرحباً بك في نادي أندلسية أيها القائد.', 'success');
-        
-        // فتح محتوى إضافي (محاكاة)
-        document.querySelector('#dwaya-engine').classList.remove('locked');
-    } else {
-        showMessage(messageDiv, '❌ رقم العضوية غير صحيح أو غير مفعل.', 'error');
+        showToast('✅ تم إرسال طلب التسجيل', 'success');
+        setTimeout(closeModal, 1500);
     }
 }
 
 // ============================================================================
-// إضافة شريط التيكر الحي
-// ============================================================================
-function addSovereignTicker() {
-    const tickerHTML = `
-        <div class="sovereign-ticker">
-            <div class="ticker-content">
-                <div class="ticker-item">
-                    <i class="fas fa-coins"></i>
-                    <span>$TIT: <strong data-index="tit">1.00</strong> USD</span>
-                </div>
-                <div class="ticker-item">
-                    <i class="fas fa-users"></i>
-                    <span>المواطنون: <strong data-index="citizens">10,342</strong></span>
-                </div>
-                <div class="ticker-item">
-                    <i class="fas fa-landmark"></i>
-                    <span>الأصول التراثية: <strong data-index="heritage">47</strong></span>
-                </div>
-                <div class="ticker-item">
-                    <i class="fas fa-chart-line"></i>
-                    <span>مؤشر السيادة: <strong data-index="score">618</strong></span>
-                </div>
-                <div class="ticker-item">
-                    <i class="fas fa-crown"></i>
-                    <span>φ = 1.618</span>
-                </div>
-            </div>
-        </div>
-    `;
-    
-    document.body.insertAdjacentHTML('afterbegin', tickerHTML);
-}
-
-// ============================================================================
-// إضافة مؤشرات السيادة (بطاقات)
-// ============================================================================
-function addSovereignIndexCards() {
-    const indexHTML = `
-        <div class="sovereign-index">
-            <div class="index-card">
-                <div class="index-value" data-index="tit">1.00</div>
-                <div class="index-label">$TIT / USD</div>
-                <div class="index-trend"><i class="fas fa-arrow-up"></i> ثابت</div>
-            </div>
-            <div class="index-card">
-                <div class="index-value" data-index="citizens">10,342</div>
-                <div class="index-label">مواطن رقمي</div>
-                <div class="index-trend"><i class="fas fa-arrow-up"></i> +12%</div>
-            </div>
-            <div class="index-card">
-                <div class="index-value" data-index="heritage">47</div>
-                <div class="index-label">أصل تراثي</div>
-                <div class="index-trend"><i class="fas fa-arrow-up"></i> +3%</div>
-            </div>
-            <div class="index-card">
-                <div class="index-value" data-index="score">618</div>
-                <div class="index-label">مؤشر السيادة</div>
-                <div class="index-trend"><i class="fas fa-arrow-up"></i> +1.6%</div>
-            </div>
-        </div>
-    `;
-    
-    document.body.insertAdjacentHTML('beforeend', indexHTML);
-}
-
-// ============================================================================
-// إضافة أكواد التفعيل
-// ============================================================================
-function addActivationCodes() {
-    const codesHTML = `
-        <div class="codes-grid">
-            <div class="code-chip" onclick="copyCode('Architect_2026', this)">
-                <i class="fas fa-crown"></i> Architect_2026
-            </div>
-            <div class="code-chip" onclick="copyCode('Civic_Pulse', this)">
-                <i class="fas fa-vote-yea"></i> Civic_Pulse
-            </div>
-            <div class="code-chip" onclick="copyCode('Young_Innovator', this)">
-                <i class="fas fa-lightbulb"></i> Young_Innovator
-            </div>
-            <div class="code-chip" onclick="copyCode('Foresight_Ambassador', this)">
-                <i class="fas fa-star"></i> Foresight_Ambassador
-            </div>
-        </div>
-    `;
-    
-    document.body.insertAdjacentHTML('beforeend', codesHTML);
-}
-
-// ============================================================================
-// تهيئة بيئة Three.js لضواية
-// ============================================================================
-function initDwayaEngine() {
-    const container = document.getElementById('dwaya-container');
-    if (!container) return;
-    
-    // محاكاة تحميل Three.js
-    container.innerHTML = `
-        <div class="dwaya-loading">
-            <i class="fas fa-cube"></i>
-            <p>جاري تحميل محرك ضواية ثلاثي الأبعاد...</p>
-            <p style="font-size: 0.8rem; color: #444;">سيتم ربط النماذج قريباً (ملفات .obj/.glb)</p>
-        </div>
-    `;
-    
-    // في النسخة القادمة: سيتم إضافة كود Three.js الفعلي هنا
-    console.log('✅ Dwaya 3D Engine initialized');
-}
-
-// ============================================================================
-// التشغيل عند تحميل الصفحة
+// التهيئة
 // ============================================================================
 document.addEventListener('DOMContentLoaded', () => {
     // إضافة البصمة الجينية
@@ -370,8 +407,8 @@ document.addEventListener('DOMContentLoaded', () => {
     // إضافة أكواد التفعيل
     addActivationCodes();
     
-    // تهيئة محرك ضواية
-    initDwayaEngine();
+    // تهيئة نظام الحالة
+    SovereignState.init();
     
     // بدء تحديث المؤشرات
     updateSovereignIndices();
@@ -384,5 +421,5 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
     
-    console.log('✅ Istishraf Sovereign Hub v1.2 initialized');
+    console.log('✅ Istishraf Sovereign Hub v1.4 initialized');
 });
